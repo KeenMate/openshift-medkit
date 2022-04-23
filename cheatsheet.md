@@ -11,8 +11,8 @@
 | Description  | Command | Example |
 | -----------  | ------- | ------- |
 | Get current project | oc project | |
-| Get all projects | oc get project or oc projects (simplified list) | |
-| New project | oc new-project [project-name] | oc new-project first-web-application|
+| Get all projects | ``oc get project`` or ``oc projects`` (simplified list) | |
+| New project | `oc new-project [project-name]` | oc new-project first-web-application|
 | Switch to project | oc project [other-project-name] | oc project second-web-application |
 
 
