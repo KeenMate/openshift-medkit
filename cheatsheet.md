@@ -1,6 +1,7 @@
 # OpenShift CheatSheet for those who want to stay sane
 
 > This is not a complete list, it's a list that gets you started and is divided to logical groups and chronological order as you would probably use OpenShift
+>  
 > [All commands in alphabetical order can be found here](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/developer-cli-commands.html)
 
 
@@ -46,7 +47,6 @@
 | Get pod | oc get pod [pod_name] | oc get pod first-web-application-2-2wtqp |
 | Get detailed pod view | oc get -o yaml pod/[pod_name] | oc get -o yaml pod/first-web-application-2-2wtqp |
 | Create pod from local file | oc create -f [file_path_to_pod_definition] | oc create -f pods/first-web-application.yaml |
-
 | Get into pod (into first container) | oc rsh [pod_name] | oc get pod first-web-application-2-2wtqp |
 | Get into pod and specific container | oc rsh [pod_name] -c [container_name] | oc get pod first-web-application-2-2wtqp -c elixir-app |
 | Run command in pod's first container | oc get pod [pod_name] [command] | oc get pod first-web-application-2-2wtqp ls /data |
