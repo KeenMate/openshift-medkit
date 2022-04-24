@@ -72,7 +72,7 @@ Few notes:
 - Pods and deployConfigs can be exposed
 - When exposing a service, service name is taken from pod or deployConfig name, unless overriden with ``--name=`` attribute
 - There is no check if any of the pod's containers actually exposes given port
-- You can expose give dc or pod multiple times, every time it gets a different IP address and service name
+- You can expose given dc or pod multiple times, every time it gets a different IP address and service name
 - You can expose multiple ports with the same service using ``--port [port_number],[port_number_2],[etc]``
 - You can add custom attributes to exposed services with ``-l [attribute_name]=[attribute_value]``
 
@@ -89,11 +89,21 @@ Few notes:
 
 
 ## Routes (exposing pods to outside world, by exposing services)
+
+Few notes:
+- Routes are used to expose HTTP(S) services to outside world and CANNOT be used for different protocols and applications, for example Redis, PostgreSQL and so on
+- Routes exposes services to outside world
+- When exposing a service with route, route name is taken from service name, unless overriden with ``--name=`` attribute
+- Route name is combined with project base url into final address, for example _first-web-application-our-web.openshift.com_, unless overriden with ``--hostname=[different url address]`` parameter
+- Route names are unique per project
+- One service can be exposed by multiple routes with different names
+
 | Description  | Command | Example | Comment |
 | -----------  | ------- | ------- | ------- |
 | Get help | oc explain route |||
-| Get current services | oc explain service |||
-
+| Get current routes | oc get route |||
+| Get current routes with labels | oc get route --show-labels |||
+| Expose service | oc expose svc/[service_name] or oc expose service [service_name] | oc expose svc/first-web-application ||
 
 
 ## Deployment configuration
