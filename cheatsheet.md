@@ -63,12 +63,59 @@
 | Forward multiple ports temporarily to different port on your local machine | oc port-forward [pod_name] [local_port_1:pod_port_1] [pod_port_2 and so on] | oc port-forward first-web-application-2-2wtqp 5432 9000:8080 ||
 | Get logs from pod's first container | oc logs [pod_name] | oc logs first-web-application-2-2wtqp ||
 | Get and follow logs from pod's first container | oc logs -f [pod_name] | oc logs -f first-web-application-2-2wtqp ||
-| Get and follow logs from pod's container | oc logs [pod_name] -c [container_name] | oc logs first-web-application-2-2wtqp -c elixir-app ||
+| Get and follow logs from pod's container | oc logs -f [pod_name] -c [container_name] | oc logs -f first-web-application-2-2wtqp -c elixir-app ||
 | Delete pod | oc delete pod [pod_name] | oc delete pod first-web-application-2-2wtqp ||
 
-## Deployment config
+## Services (exposing pods to inner world)
+
+Few notes:
+- Pods and deployConfigs can be exposed
+- When exposing a service, service name is taken from pod or deployConfig name, unless overriden with ``--name=`` attribute
+- There is no check if any of the pod's containers actually exposes given port
+- You can expose give dc or pod multiple times, every time it gets a different IP address and service name
+- You can expose multiple ports with the same service using ``--port [port_number],[port_number_2],[etc]``
+- You can add custom attributes to exposed services with ``-l [attribute_name]=[attribute_value]``
+
+| Description  | Command | Example | Comment |
+| -----------  | ------- | ------- | ------- |
+| Get help | oc explain service |||
+| Get current services | oc get svc |||
+| Get detailed service definition | oc get -o yaml svc/[service_name] | oc get -o yaml svc/first-web-application ||
+| Exposing pod | oc expose pod/[pod_name] --port [port_number] | oc expose pod/first-world-application-pod --port 4000 ||
+| Exposing pod with custom name | oc expose pod/[pod_name] --port [port_number] --name [service_name] | oc expose pod/first-world-application-pod --name=real_exposer ||
+| Exposing service | oc expose [object_type (pod/dc/svc)]/[service_name] or oc expose service [service_name] | oc expose svc/first-world-application ||
+| Exposing service with custom name | oc expose svc/[service_name] --name=[custom_service_name] | oc expose svc/first-world-application  ||
+| Delete service | oc delete svc/[service_name] | oc delete svc/first-web-application ||
+
+
+## Routes (exposing pods to outside world, by exposing services)
+| Description  | Command | Example | Comment |
+| -----------  | ------- | ------- | ------- |
+| Get help | oc explain route |||
+| Get current services | oc explain service |||
+
+
+
+## Deployment configuration
+
+| Description  | Command | Example | Comment |
+| -----------  | ------- | ------- | ------- |
+| Get help | oc explain dc |||
+| Get current deployment configurations | oc get dc |||
+
 
 ## Builds
+
+
+## Image streams/tags (inner mapping of docker images, for example to external sources like docker.io, quay.io and so on)
+
+| Description  | Command | Example | Comment |
+| -----------  | ------- | ------- | ------- |
+| Get help for image streams | oc explain is |||
+| Get existing image streams | oc get is |||
+| Delete image streams | oc delete is/[image_stream_name] | oc delete is/first-web-application ||
+
+
 
 ## Image streams/tags
 
