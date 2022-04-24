@@ -104,6 +104,9 @@ Few notes:
 | Get current routes | oc get route |||
 | Get current routes with labels | oc get route --show-labels |||
 | Expose service | oc expose svc/[service_name] or oc expose service [service_name] | oc expose svc/first-web-application ||
+| Expose service with different name | oc expose svc/[service_name] --name=[new_route_name] | oc expose svc/first-web-application --name=fwa ||
+| Expose service with different name | oc expose svc/[service_name] --hostname=[new_host_name] | oc expose svc/first-web-application --name=www.restaurant.com ||
+| Delete service | oc delete route/[route_name] | oc delete route/first-web-application ||
 
 
 ## Deployment configuration
