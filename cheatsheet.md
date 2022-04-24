@@ -1,9 +1,8 @@
-# OpenShift CheatSheet for those who want to stay sane
+# OpenShift CheatSheet for those who want to stay sane (based on v4.10)
 
 > This is not a complete list, it's a list that gets you started and is divided to logical groups and chronological order as you would probably use OpenShift
 >  
 > [All commands in alphabetical order can be found here](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/developer-cli-commands.html)
-
 
 
 ## Most common
@@ -37,6 +36,26 @@
 
 
 ## Applications
+
+Few notes:
+- Application is not a real object, it just represents whole stack of OpenShift objects like image stream, build, deploy configuration and so on that are created for the application
+- While application is being created it first looks for _Dockerfile_, if that is not found, it tries to determine if the source code can be build with _s2i_ (source to image) builders
+- Source code folder in the repository can be also defined with ``--context-dir`` that is relative to the root of the repository, it can but also doesn't have to start with slash
+- Use of ``--as-deployment-config`` parameter is necessary to create a deployment configuration for this new application
+- Parameters below can be combined to get proper source code, for example branch and context dir
+
+| Description  | Command | Example | Comment |
+| -----------  | ------- | ------- | ------- |
+| New app from local source | oc new-app /path/to/source/code --as-deployment-config |||
+| New app from Git repository | oc new-app [git_repository_path] --as-deployment-config | oc new-app https://github.com/sclorg/cakephp-ex --as-deployment-config | This repository is build with PHP s2i, source code is taken from root folder |
+| New app from Git repository from custom folder | oc new-app [git_repository_path] --context-dir=[relative_directory_path] --as-deployment-config | oc new-app https://github.com/sclorg/s2i-ruby-container.git --context-dir=2.0/test/puma-test-app --as-deployment-config | This repository is build with Ruby s2i |
+| New app from Git repository with specific branch | oc new-app [git_repository_path]#[branch_name] --as-deployment-config | oc new-app https://github.com/not-existant/repo#dev --as-deployment-config | |
+| New app from Git repository with custom name | oc new-app  [git_repository_path] --as-deployment-config --name=[custom_app_name] | oc new-app https://github.com/sclorg/cakephp-ex --as-deployment-config --name=cake ||
+| New app from Git repository with custom labels | oc new-app  [git_repository_path] --as-deployment-config -l [label_name]=[custom_app_name] | oc new-app https://github.com/sclorg/cakephp-ex --as-deployment-config -l app=cake | Multiple labels are defined with multiple -l parameters|
+| Get all objects for the app | oc get all -l app=[app_name] | oc get all -l app=cake | You can of course use any other label selector that you have defined|
+| Delete whole app | oc delete all -l app=[app_name] | oc delete -l app=cake | You can of course use any other label selector that you have defined|
+
+
 
 ## Pods
 
