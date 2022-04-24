@@ -52,9 +52,8 @@ Few notes:
 | New app from Git repository with specific branch | oc new-app [git_repository_path]#[branch_name] --as-deployment-config | oc new-app https://github.com/not-existant/repo#dev --as-deployment-config | |
 | New app from Git repository with custom name | oc new-app  [git_repository_path] --as-deployment-config --name=[custom_app_name] | oc new-app https://github.com/sclorg/cakephp-ex --as-deployment-config --name=cake ||
 | New app from Git repository with custom labels | oc new-app  [git_repository_path] --as-deployment-config -l [label_name]=[custom_app_name] | oc new-app https://github.com/sclorg/cakephp-ex --as-deployment-config -l app=cake | Multiple labels are defined with multiple -l parameters|
-| Get all objects for the app | oc get all -l app=[app_name] | oc get all -l app=cake | You can of course use any other label selector that you have defined|
-| Delete whole app | oc delete all -l app=[app_name] | oc delete -l app=cake | You can of course use any other label selector that you have defined|
-
+| Get all objects for the app | oc get all -l app=[app_name] | oc get all -l app=cake | You can of course use any other label selector that you have defined, for example -l app_id=123 |
+| Delete whole app | oc delete all -l app=[app_name] | oc delete -l app=cake | You can of course use any other label selector that you have defined, for example -l app_id=123 |
 
 
 ## Pods
@@ -128,12 +127,39 @@ Few notes:
 | Delete service | oc delete route/[route_name] | oc delete route/first-web-application ||
 
 
-## Deployment configuration
+## Replication controllers
+
+Few notes:
+- Replication controllers take care of creation and termination of pods based on desired replica number of pods
 
 | Description  | Command | Example | Comment |
 | -----------  | ------- | ------- | ------- |
 | Get help | oc explain dc |||
-| Get current deployment configurations | oc get dc |||
+| Get current replication controllers | oc get rc |||
+| Watch replication controllers | oc get rc --watch |||
+| Get replication controller details | oc describe rc/[rc_name] | oc describe rc/cakephp-ex-1 ||
+| Get replication controller definition | oc get -o yaml rc/[rc_name] | oc get -o yaml rc/cakephp-ex-1 ||
+
+## Deployment configuration
+
+Few notes:
+- Deployment configurations describe how one or multiple pods are deployed in OpenShift
+- You can try dry run with --dry-run to see what will be deployed and how
+
+| Description  | Command | Example | Comment |
+| -----------  | ------- | ------- | ------- |
+| Get help | oc explain dc |||
+| Get current deployment config | oc get dc |||
+| Get deployment config details | oc describe dc/[deploy_config_name] | oc describe dc/cakephp-ex | Here you can find exposed ports of each container, what triggers new builds, last build information, last events and so on||
+| Get deployment config definition | oc get -o yaml dc/[deploy_config_name] | oc get -o yaml dc/cakephp-ex | This is a whole deployment configuration for whole application in yaml ||
+| Start rollout of the latest version of code/configuration/settings | oc rollout latest dc/[deploy_config_name] | oc rollout latest dc/cakephp-ex ||
+| Cancel ongoing rollout | oc rollout cancel dc/[deploy_config_name] | oc rollout cancel dc/cakephp-ex ||
+| Rollback rollout to previous version | oc rollback dc/[deploy_config_name] | oc rollback dc/cakephp-ex | Disables automatic triggers for new builds, those have to be reenabled again |
+| Rollback rollout to specific version | oc rollback dc/[deploy_config_name] --to-version=[version_number] | oc rollback dc/cakephp-ex --to-version=1 | Disables automatic triggers for new builds, those have to be reenabled again |
+| Get rollouts history for dc | oc rollout history dc/[deploy_config_name] | oc rollout history dc/cakephp-ex ||
+| Reset automatic triggers to auto | oc set triggers dc/[deploy_config_name] --auto | oc set triggers dc/cakephp-ex --auto ||
+| Removes all triggers from dc | oc set triggers dc/[deploy_config_name] --remove-all | oc set triggers dc/cakephp-ex --remove-all | This effectivelly means all deployments have to be trigged manually |
+
 
 
 ## Builds
