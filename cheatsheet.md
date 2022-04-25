@@ -47,6 +47,7 @@ Few notes:
 | Create cm from text file | oc create configmap [config_map_name] --from-file=[file_name] | oc create configmap enemy-forces --from-file="./data files/properties.txt" | Whole file content will be saved under variable [file_name], in this case _properties.txt_ |
 | Create cm from text file with specific variable name | oc create configmap [config_map_name] --from-file=[variable_name]=[file_name] | oc create configmap dev_properties --from-file=RUN_PROPERTIES="./data files/properties.txt" | Whole file content will be saved under variable [variable_name], in this case RUN_PROPERTIES |
 | Set configuration map to be used with dc | oc set env dc/[deploy_config_name] --from cm/[cm_name] | oc set env dc/cakephp-ex --from cm/cake-env-variables ||
+| To unset specific environment variable from dc | oc set env dc/[deploy_config_name] [env_var_name]- | oc set env dc/cakephp-ex DB_HOST- | The ``-`` character at the end of environment variable is crucial and mandatory|
 | Get all environment variables in all pods | oc set env pods --all --list |||
 | Get all environment variables in pods based on selector | oc set env pods -l app=[app_name] --list | oc set env pods -l app=cake --list ||
 | Get all environment variables in single pod | oc set env pod/[pod_name] --list | oc set env pod/cakephp-ex-3-j21jk --list ||
