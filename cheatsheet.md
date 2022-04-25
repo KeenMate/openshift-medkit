@@ -29,10 +29,27 @@
 
 ## Config maps + Secrets
 
+Few notes:
+- Config maps and secrets are basically the same thing, in principle
+- Config maps *SHOULD NOT* contain any sensitive information
+- Config maps and secrets can be either 
+  - Textual values that are mapped to ENV variables that pod's container expects and has defined
+  - Content of files are mapped to variables if the files are UTF8 text files
+  - Content of files are stored under variables if they are not UTF8 text files
+
 | Description  | Command | Example | Comment |
 | -----------  | ------- | ------- | ------- |
 | Get help | oc explain configMap and oc explain secret |||
-| User created | oc create configmap dummy-config-ma |||
+| Get current config maps | oc get cm || Labels could be displayed with ``--show-labels`` |
+| Get config map details | oc describe cm/[config_map_name] | oc describe cm/admin-groups | Shows also values |
+| Get config map definition | oc get -o yaml cm/[config_map_name] | oc get -o yaml cm/admin-groups | Shows also values |
+| Create cm from command line | oc create configmap [config_map_name] --from-literal [variable_name]=[variable_value] | oc create configmap enemy-forces --from-literal STRONGEST="Hussites" | Multiple values are create with multiple ``--from-literal`` parameter |
+| Create cm from text file | oc create configmap [config_map_name] --from-file=[file_name] | oc create configmap enemy-forces --from-file="./data files/properties.txt" | Whole file content will be saved under variable [file_name], in this case _properties.txt_ |
+| Create cm from text file with specific variable name | oc create configmap [config_map_name] --from-file=[variable_name]=[file_name] | oc create configmap dev_properties --from-file=RUN_PROPERTIES="./data files/properties.txt" | Whole file content will be saved under variable [variable_name], in this case RUN_PROPERTIES |
+| Set configuration map to be used with dc | oc set env dc/[deploy_config_name] --from cm/[cm_name] | oc set env dc/cakephp-ex --from cm/cake-env-variables ||
+| Get all environment variables in all pods | oc set env pods --all --list |||
+| Get all environment variables in pods based on selector | oc set env pods -l app=[app_name] --list | oc set env pods -l app=cake --list ||
+| Get all environment variables in single pod | oc set env pod/[pod_name] --list | oc set env pod/cakephp-ex-3-j21jk --list ||
 
 
 ## Applications
@@ -93,6 +110,8 @@ Few notes:
 - You can expose given dc or pod multiple times, every time it gets a different IP address and service name
 - You can expose multiple ports with the same service using ``--port [port_number],[port_number_2],[etc]``
 - You can add custom attributes to exposed services with ``-l [attribute_name]=[attribute_value]``
+- *!IMPORTANT!* Each service adds an environment configuration to each pod containers that should be used for IP address and port lookup
+  - These can be seen when ``oc rsh`` into an pod's container and running ``env`` command
 
 | Description  | Command | Example | Comment |
 | -----------  | ------- | ------- | ------- |
@@ -144,7 +163,7 @@ Few notes:
 
 Few notes:
 - Deployment configurations describe how one or multiple pods are deployed in OpenShift
-- You can try dry run with --dry-run to see what will be deployed and how
+- You can try dry run with ``--dry-run`` parameter to see what will be deployed and how
 
 | Description  | Command | Example | Comment |
 | -----------  | ------- | ------- | ------- |
@@ -159,6 +178,7 @@ Few notes:
 | Get rollouts history for dc | oc rollout history dc/[deploy_config_name] | oc rollout history dc/cakephp-ex ||
 | Reset automatic triggers to auto | oc set triggers dc/[deploy_config_name] --auto | oc set triggers dc/cakephp-ex --auto ||
 | Removes all triggers from dc | oc set triggers dc/[deploy_config_name] --remove-all | oc set triggers dc/cakephp-ex --remove-all | This effectivelly means all deployments have to be trigged manually |
+| Set configuration map to be used with dc | oc set env dc/[deploy_config_name] --from cm/[cm_name] | oc set env dc/cakephp-ex --from cm/cake-env-variables ||
 
 
 
