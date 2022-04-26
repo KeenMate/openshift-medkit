@@ -5,7 +5,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: postgresql-persistent-template
+  template: postgresql-persistent-template-limited
 message: |-
   The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
 
@@ -27,7 +27,7 @@ metadata:
     openshift.io/long-description: This template provides a standalone PostgreSQL
       server with a database created.  The database is stored on persistent storage.  The
       database name, username, and password are chosen via parameters when provisioning
-      this service.
+      this service. This template requires CPU and Memory limits to be defined.
     openshift.io/provider-display-name: Red Hat, Inc.
     openshift.io/support-url: https://access.redhat.com
     samples.operator.openshift.io/version: 4.8.29
@@ -35,8 +35,7 @@ metadata:
   creationTimestamp: "2020-09-11T13:07:32Z"
   labels:
     samples.operator.openshift.io/managed: "true"
-  name: postgresql-persistent
-  namespace: openshift
+  name: postgresql-persistent-limited
   resourceVersion: "949471962"
   uid: e9488ab8-dd19-4d76-b688-9e4ac5ec5c56
 objects:
@@ -93,6 +92,13 @@ objects:
       name: ${DATABASE_SERVICE_NAME}
     strategy:
       type: Recreate
+      resources:
+        limits:
+          cpu: 100m
+          memory: 100Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
     template:
       metadata:
         labels:
@@ -162,7 +168,7 @@ objects:
         - postgresql
         from:
           kind: ImageStreamTag
-          name: postgresql:${POSTGRESQL_VERSION}
+          name: ${POSTGRESQL_IS_NAME}:${POSTGRESQL_VERSION}
           namespace: ${NAMESPACE}
         lastTriggeredImage: ""
       type: ImageChange
@@ -178,7 +184,7 @@ parameters:
   displayName: CPU Limit
   name: CPU_LIMIT
   required: true
-  value: 800
+  value: "800m"
 - description: Maximum request amount of memory the container can use.
   displayName: Memory Limit
   name: REQUEST_MEMORY_LIMIT
@@ -188,7 +194,7 @@ parameters:
   displayName: CPU Limit
   name: REQUEST_CPU_LIMIT
   required: true
-  value: 500
+  value: "500m"
 - description: The OpenShift Namespace where the ImageStream resides.
   displayName: Namespace
   name: NAMESPACE
@@ -220,8 +226,13 @@ parameters:
   name: VOLUME_CAPACITY
   required: true
   value: 1Gi
+- description: PostgreSQL image stream to be used. Might be official or custom. Remember to update namespace to appropriate value.
+  displayName: Image stream name
+  name: POSTGRESQL_IS_NAME
+  required: true
+  value: postgresql
 - description: Version of PostgreSQL image to be used (10-el7, 10-el8, or latest).
   displayName: Version of PostgreSQL Image
   name: POSTGRESQL_VERSION
   required: true
-  value: 10-el8
+  value: latest
