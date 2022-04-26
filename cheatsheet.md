@@ -4,7 +4,6 @@
 >  
 > [All commands in alphabetical order can be found here](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/developer-cli-commands.html)
 
-
 ## Most common
 
 | Description  | Command | Example | Comment |
@@ -198,3 +197,15 @@ Few notes:
 
 ## Image streams/tags
 
+
+## Templates
+
+| Description  | Command | Example | Comment |
+| -----------  | ------- | ------- | ------- |
+| Get help for templates | oc explain template |||
+| Get existing templates | oc get template |||
+| Get existing templates in specific namespace | oc get template -n [namespace_name] | oc get template -n openshift||
+| Delete template | oc delete template/[template_name] | oc delete template/postgresql-slave ||
+| Delete template in specific namespace | oc delete -n [namespace_name] template/[template_name] | oc delete -n web-application-dev template/postgresql-slave ||
+
+oc create -f ./postgresql.yaml
